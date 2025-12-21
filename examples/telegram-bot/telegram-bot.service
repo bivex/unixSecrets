@@ -1,0 +1,92 @@
+[Unit]
+Description=Telegram Bot with Unix Secrets Manager
+After=secrets-decrypt.service network.target
+Requires=secrets-decrypt.service
+Wants=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /opt/telegram-bot/telegram_bot.py
+Restart=always
+RestartSec=10
+
+# Загрузка всех 50+ секретов через systemd credentials
+LoadCredential=telegram-bot-token:/run/secrets/telegram-bot-token
+LoadCredential=telegram-bot-username:/run/secrets/telegram-bot-username
+LoadCredential=telegram-webhook-url:/run/secrets/telegram-webhook-url
+LoadCredential=telegram-webhook-secret:/run/secrets/telegram-webhook-secret
+
+LoadCredential=database-url:/run/secrets/database-url
+LoadCredential=database-host:/run/secrets/database-host
+LoadCredential=database-port:/run/secrets/database-port
+LoadCredential=database-name:/run/secrets/database-name
+LoadCredential=database-user:/run/secrets/database-user
+LoadCredential=database-password:/run/secrets/database-password
+LoadCredential=database-ssl-mode:/run/secrets/database-ssl-mode
+LoadCredential=database-connection-pool-size:/run/secrets/database-connection-pool-size
+LoadCredential=database-connection-timeout:/run/secrets/database-connection-timeout
+
+LoadCredential=redis-url:/run/secrets/redis-url
+LoadCredential=redis-host:/run/secrets/redis-host
+LoadCredential=redis-port:/run/secrets/redis-port
+LoadCredential=redis-db:/run/secrets/redis-db
+LoadCredential=redis-password:/run/secrets/redis-password
+LoadCredential=redis-connection-pool-size:/run/secrets/redis-connection-pool-size
+LoadCredential=redis-connection-timeout:/run/secrets/redis-connection-timeout
+
+LoadCredential=openai-api-key:/run/secrets/openai-api-key
+LoadCredential=google-maps-api-key:/run/secrets/google-maps-api-key
+LoadCredential=stripe-secret-key:/run/secrets/stripe-secret-key
+LoadCredential=stripe-publishable-key:/run/secrets/stripe-publishable-key
+LoadCredential=sendgrid-api-key:/run/secrets/sendgrid-api-key
+LoadCredential=twilio-account-sid:/run/secrets/twilio-account-sid
+LoadCredential=twilio-auth-token:/run/secrets/twilio-auth-token
+LoadCredential=twilio-phone-number:/run/secrets/twilio-phone-number
+
+LoadCredential=sentry-dsn:/run/secrets/sentry-dsn
+LoadCredential=log-level:/run/secrets/log-level
+LoadCredential=log-file:/run/secrets/log-file
+LoadCredential=metrics-enabled:/run/secrets/metrics-enabled
+LoadCredential=health-check-token:/run/secrets/health-check-token
+
+LoadCredential=enable-analytics:/run/secrets/enable-analytics
+LoadCredential=enable-notifications:/run/secrets/enable-notifications
+LoadCredential=enable-scheduler:/run/secrets/enable-scheduler
+LoadCredential=enable-cache:/run/secrets/enable-cache
+LoadCredential=enable-rate-limiting:/run/secrets/enable-rate-limiting
+
+LoadCredential=jwt-secret:/run/secrets/jwt-secret
+LoadCredential=encryption-key:/run/secrets/encryption-key
+LoadCredential=session-secret:/run/secrets/session-secret
+LoadCredential=csrf-secret:/run/secrets/csrf-secret
+
+LoadCredential=smtp-host:/run/secrets/smtp-host
+LoadCredential=smtp-port:/run/secrets/smtp-port
+LoadCredential=smtp-username:/run/secrets/smtp-username
+LoadCredential=smtp-password:/run/secrets/smtp-password
+LoadCredential=email-from:/run/secrets/email-from
+
+# И так далее для всех остальных секретов...
+# В реальном файле нужно добавить все 50+ секретов
+
+# Используем DynamicUser для дополнительной изоляции
+DynamicUser=yes
+NoNewPrivileges=yes
+
+# Ограничения безопасности
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+MemoryDenyWriteExecute=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+
+# Переменная окружения для пути к credentials
+Environment=CREDENTIALS_DIR=/run/credentials/%n
+
+# Лимиты ресурсов
+MemoryLimit=512M
+CPUQuota=100%
+
+[Install]
+WantedBy=multi-user.target

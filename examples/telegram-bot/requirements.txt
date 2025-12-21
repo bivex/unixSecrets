@@ -1,0 +1,33 @@
+# Telegram Bot dependencies
+python-telegram-bot==20.7
+python-dotenv==1.0.0
+
+# Monitoring and logging
+sentry-sdk==1.38.0
+
+# Database
+psycopg2-binary==2.9.7
+
+# System monitoring
+psutil==5.9.6
+
+# Redis cache
+redis==5.0.1
+
+# Web framework для health checks
+fastapi==0.104.1
+uvicorn==0.24.0
+
+# HTTP client
+aiohttp==3.9.1
+
+# Environment validation
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# Logging
+structlog==23.2.0
+
+# Security
+cryptography==41.0.7
+bcrypt==4.1.2

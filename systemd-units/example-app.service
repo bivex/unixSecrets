@@ -1,0 +1,31 @@
+[Unit]
+Description=Example application using secrets
+After=secrets-decrypt.service
+Requires=secrets-decrypt.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /opt/example-app/app.py
+Restart=always
+
+# Загружаем секреты через systemd credentials
+LoadCredential=db_password:/run/secrets/db_password
+LoadCredential=jwt_key:/run/secrets/jwt_signing_key
+
+# Используем DynamicUser для дополнительной изоляции
+DynamicUser=yes
+NoNewPrivileges=yes
+
+# Ограничения безопасности
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+MemoryDenyWriteExecute=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+
+# Секреты доступны в /run/credentials/example-app.service/
+Environment=CREDENTIALS_DIR=/run/credentials/%n
+
+[Install]
+WantedBy=multi-user.target

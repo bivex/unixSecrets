@@ -1,0 +1,136 @@
+# Тестовый env файл для Docker тестирования
+# ⚠️  НЕ ИСПОЛЬЗУЙТЕ В PRODUCTION!
+
+# Telegram Bot Configuration
+TELEGRAM_BOT_TOKEN=demo_token_for_testing_only
+TELEGRAM_BOT_USERNAME=demo_bot
+TELEGRAM_WEBHOOK_URL=https://demo.example.com/webhook
+TELEGRAM_WEBHOOK_SECRET=demo_webhook_secret
+
+# Database Configuration
+DATABASE_URL=postgresql://db_user:db_password@postgres:5432/bot_db
+DATABASE_HOST=postgres
+DATABASE_PORT=5432
+DATABASE_NAME=bot_db
+DATABASE_USER=db_user
+DATABASE_PASSWORD=demo_db_password
+DATABASE_SSL_MODE=disable
+DATABASE_CONNECTION_POOL_SIZE=5
+DATABASE_CONNECTION_TIMEOUT=30
+
+# Redis Cache Configuration
+REDIS_URL=redis://redis:6379/0
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_DB=0
+REDIS_PASSWORD=demo_redis_password
+REDIS_CONNECTION_POOL_SIZE=5
+REDIS_CONNECTION_TIMEOUT=5
+
+# API Keys and External Services
+OPENAI_API_KEY=demo_openai_key
+GOOGLE_MAPS_API_KEY=demo_google_maps_key
+STRIPE_SECRET_KEY=demo_stripe_secret
+STRIPE_PUBLISHABLE_KEY=demo_stripe_publishable
+SENDGRID_API_KEY=demo_sendgrid_key
+TWILIO_ACCOUNT_SID=demo_twilio_sid
+TWILIO_AUTH_TOKEN=demo_twilio_token
+TWILIO_PHONE_NUMBER=+1234567890
+
+# Monitoring and Logging
+SENTRY_DSN=demo_sentry_dsn
+LOG_LEVEL=INFO
+LOG_FILE=/var/log/telegram_bot.log
+METRICS_ENABLED=true
+HEALTH_CHECK_TOKEN=demo_health_token
+
+# Feature Flags
+ENABLE_ANALYTICS=false
+ENABLE_NOTIFICATIONS=false
+ENABLE_SCHEDULER=false
+ENABLE_CACHE=true
+ENABLE_RATE_LIMITING=true
+
+# Security Settings
+JWT_SECRET=demo_jwt_secret_very_long_and_secure_123456789
+ENCRYPTION_KEY=demo_aes256_encryption_key_32_chars_long
+SESSION_SECRET=demo_session_secret
+CSRF_SECRET=demo_csrf_secret
+
+# Email Configuration
+SMTP_HOST=localhost
+SMTP_PORT=587
+SMTP_USERNAME=demo@example.com
+SMTP_PASSWORD=demo_password
+EMAIL_FROM=demo@example.com
+
+# File Storage
+AWS_ACCESS_KEY_ID=demo_aws_key
+AWS_SECRET_ACCESS_KEY=demo_aws_secret
+AWS_REGION=us-east-1
+AWS_S3_BUCKET=demo-bucket
+AWS_S3_ENDPOINT=https://s3.amazonaws.com
+
+# Web Server Configuration
+WEB_SERVER_HOST=0.0.0.0
+WEB_SERVER_PORT=8080
+WEB_SERVER_WORKERS=2
+WEB_SERVER_TIMEOUT=30
+WEB_SERVER_MAX_REQUEST_SIZE=10485760
+
+# Admin Configuration
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=demo_admin_password
+ADMIN_EMAIL=admin@demo.com
+
+# Backup Configuration
+BACKUP_ENABLED=false
+BACKUP_SCHEDULE=0 2 * * *
+BACKUP_RETENTION_DAYS=7
+BACKUP_S3_BUCKET=demo-backups
+
+# Rate Limiting
+RATE_LIMIT_REQUESTS_PER_MINUTE=30
+RATE_LIMIT_BURST_SIZE=5
+RATE_LIMIT_WINDOW_SECONDS=60
+
+# Cache Configuration
+CACHE_TTL_SECONDS=1800
+CACHE_MAX_SIZE_MB=50
+CACHE_REDIS_PREFIX=telegram_bot:
+
+# Notification Settings
+NOTIFICATION_WEBHOOK_URL=https://demo.slack.com/webhook
+NOTIFICATION_SLACK_TOKEN=demo_slack_token
+NOTIFICATION_EMAIL_TO=demo@demo.com
+
+# Performance Settings
+MAX_CONCURRENT_REQUESTS=50
+REQUEST_TIMEOUT_SECONDS=30
+MEMORY_LIMIT_MB=256
+CPU_LIMIT=0.5
+
+# Development Settings
+DEBUG_MODE=true
+DEVELOPMENT_DATABASE_URL=sqlite:///dev.db
+TESTING_ENABLED=true
+
+# Analytics Configuration
+ANALYTICS_TRACKING_ID=demo_ga_id
+ANALYTICS_API_SECRET=demo_analytics_secret
+
+# Payment Configuration
+PAYMENT_CURRENCY=USD
+PAYMENT_MIN_AMOUNT=1.00
+PAYMENT_MAX_AMOUNT=100.00
+PAYMENT_PROCESSOR=stripe
+
+# Localization
+DEFAULT_LANGUAGE=en
+SUPPORTED_LANGUAGES=en
+
+# Feature Specific Settings
+MAX_FILE_SIZE_MB=5
+MAX_MESSAGE_LENGTH=2048
+COMMAND_PREFIX=/
+ADMIN_COMMANDS_ENABLED=false

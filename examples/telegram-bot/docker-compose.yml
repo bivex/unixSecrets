@@ -1,0 +1,129 @@
+# Docker Compose configuration for Telegram Bot with Unix Secrets Manager
+
+services:
+  # Сервис дешифрации секретов (работает на хосте с systemd)
+  secrets-decrypt:
+    build:
+      context: .
+      dockerfile: Dockerfile.secrets
+    container_name: telegram-bot-secrets
+    volumes:
+      # Монтируем зашифрованные секреты
+      - /etc/secrets.encrypted:/etc/secrets.encrypted:ro
+      # Создаем named volume для расшифрованных секретов
+      - secrets_volume:/run/secrets:rw
+    environment:
+      - GPG_RECIPIENT=secrets@host
+    command: ["/app/decrypt-secrets-docker.sh"]
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+    healthcheck:
+      test: ["CMD", "ls", "/run/secrets/telegram-bot-token"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Telegram бот
+  telegram-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: telegram-bot
+    depends_on:
+      secrets-decrypt:
+        condition: service_healthy
+    volumes:
+      # Монтируем расшифрованные секреты
+      - secrets_volume:/app/secrets:ro
+      # Логи
+      - ./logs:/var/log/telegram-bot:rw
+    ports:
+      - "8080:8080"
+    environment:
+      - ENVIRONMENT=production
+      - VERSION=1.0.0
+      # Отключаем systemd credentials в контейнере
+      - CREDENTIALS_DIR=
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '1.0'
+        reservations:
+          memory: 256M
+          cpus: '0.5'
+
+  # PostgreSQL база данных (опционально)
+  postgres:
+    image: postgres:15-alpine
+    container_name: telegram-bot-postgres
+    environment:
+      POSTGRES_DB: telegram_bot
+      POSTGRES_USER: bot_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/database-password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - secrets_volume:/run/secrets:ro
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bot_user -d telegram_bot"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      secrets-decrypt:
+        condition: service_healthy
+
+  # Redis кэш (опционально)
+  redis:
+    image: redis:7-alpine
+    container_name: telegram-bot-redis
+    command: redis-server --requirepass "$(cat /run/secrets/redis-password)"
+    volumes:
+      - redis_data:/data
+      - secrets_volume:/run/secrets:ro
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      secrets-decrypt:
+        condition: service_healthy
+
+volumes:
+  secrets_volume:
+    driver: local
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  default:
+    name: telegram-bot-network
